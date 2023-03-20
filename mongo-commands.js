@@ -78,3 +78,101 @@ db.books.find({ rating: { $gt: 8 } }).pretty();
 
 //rating >= 8
 db.books.find({ rating: { $gte: 8 } }).pretty();
+
+//projection  - include & exclude
+
+//inclusion
+db.books.find({}, { name: 1, rating: 1 }).pretty();
+
+db.books.find({}, { _id: 0, name: 1, rating: 1 }).pretty();
+
+//exclusion
+db.books.find({}, { name: 0, rating: 0 }).pretty();
+
+//sorting
+//asc => 1
+
+db.books.find({}).sort({ rating: 1 }).pretty();
+
+//desc => -1
+
+db.books.find({}).sort({ rating: -1 }).pretty();
+
+//projection  +  sorting
+
+db.books.find({}, { _id: 0, name: 1, rating: 1 }).sort({ rating: 1 }).pretty();
+
+//$gt operator + projection  +  sorting - asc
+
+db.books
+  .find({ rating: { $gt: 8 } }, { _id: 0, name: 1, rating: 1 })
+  .sort({ rating: 1 })
+  .pretty();
+
+//$gt operator + projection  +  sorting - desc
+db.books
+  .find({ rating: { $gt: 8 } }, { _id: 0, name: 1, rating: 1 })
+  .sort({ rating: -1 })
+  .pretty();
+
+//limit  - 2
+db.books
+  .find({}, { _id: 0, name: 1, rating: 1 })
+  .sort({ rating: -1 })
+  .limit(2)
+  .pretty();
+
+//skip
+
+db.books
+  .find({}, { _id: 0, name: 1, rating: 1 })
+  .sort({ rating: -1 })
+  .limit(2)
+  .skip(2)
+  .pretty();
+
+db.books.findOne({ rating: 8 });
+
+//sort by rating but if rating desc then sort by name asc
+
+db.books
+  .find({}, { _id: 0, name: 1, rating: 1 })
+  .sort({ rating: -1, name: 1 })
+  .pretty();
+
+//aggregation
+
+//Select sum(quantity) from orders where status= "urgent" ✅
+//group by ProductName
+
+db.orders.insertMany([
+  { _id: 0, productName: "Steel Beam", status: "new", quantity: 10 },
+  { _id: 1, productName: "Steel Beam", status: "urgent", quantity: 20 },
+  { _id: 2, productName: "Steel Beam", status: "urgent", quantity: 30 },
+  { _id: 3, productName: "Iron Rod", status: "new", quantity: 15 },
+  { _id: 4, productName: "Iron Rod", status: "urgent", quantity: 50 },
+  { _id: 5, productName: "Iron Rod", status: "urgent", quantity: 10 },
+]);
+
+db.orders.find({}).pretty();
+
+//stage 1
+
+db.orders.aggregate({ $match: { status: "urgent" } });
+
+//stage 2
+//$match, $group, $sum - aggregation operators
+
+db.orders.aggregate(
+  { $match: { status: "urgent" } },
+  {
+    $group: { _id: "$productName", totalUrgentQuantity: { $sum: "$quantity" } },
+  }
+);
+
+//Task - 10:25
+
+// 1. Update the language- english for all documents
+// 2. update The Secret - tamil
+// 3. update rating of Harry potter from 9.8 to 10
+// 4. Delete all books with rating > 8.7
