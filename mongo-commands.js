@@ -124,12 +124,7 @@ db.books
 
 //skip
 
-db.books
-  .find({}, { _id: 0, name: 1, rating: 1 })
-  .sort({ rating: -1 })
-  .limit(2)
-  .skip(2)
-  .pretty();
+db.books.find({}, { _id: 0, name: 1, rating: 1 }).sort({ rating: -1 }).limit(2).skip(2).pretty();
 
 db.books.findOne({ rating: 8 });
 
@@ -173,6 +168,23 @@ db.orders.aggregate(
 //Task - 10:25
 
 // 1. Update the language- english for all documents
+
+db.books.updateMany({}, { $set: { language: "english" } });
+
+db.books.find({}).pretty();
 // 2. update The Secret - tamil
+
+db.books.updateOne({ name: "The Secret" }, { $set: { language: "tamil" } });
+
 // 3. update rating of Harry potter from 9.8 to 10
+
+db.books.updateOne({ name: "Harry potter" }, { $set: { rating: 10 } });
+
 // 4. Delete all books with rating > 8.7
+
+db.books.find({ rating: { $gt: 8.7 } }, { name: 1, rating: 1 });
+
+db.books.deleteOne({ rating: { $gt: 8.7 } })
+
+
+db.books.deleteMany({ rating: { $gt: 8.7 } }, { name: 1, rating: 1 });
