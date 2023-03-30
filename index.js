@@ -6,9 +6,13 @@ import * as dotenv from "dotenv";
 import { booksRouter } from "./routes/books.js";
 import { usersRouter } from "./routes/users.js";
 import bcrypt from "bcrypt";
+import cors from "cors"
 
-dotenv.config();
 const app = express();
+
+app.use(cors())
+dotenv.config();
+
 app.use(express.json());
 const PORT = process.env.PORT;
 //interceptor /converting body to json
